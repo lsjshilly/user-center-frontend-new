@@ -23,23 +23,23 @@ export const ErrorPageRoute: RouteRecordRaw = {
   ],
 };
 
-export const RedirectRoute: RouteRecordRaw = {
-  path: '/redirect',
-  name: RedirectName,
-  component: Layout,
-  meta: {
-    title: RedirectName,
-    hideBreadcrumb: true,
-  },
-  children: [
-    {
-      path: '/redirect/:path(.*)',
-      name: RedirectName,
-      component: () => import('@/views/redirect/index.vue'),
-      meta: {
-        title: RedirectName,
-        hideBreadcrumb: true,
-      },
-    },
-  ],
-};
+// export const RedirectRoute: RouteRecordRaw = {
+//   path: '/redirect',
+//   name: RedirectName,
+//   component: Layout,
+//   meta: {
+//     title: RedirectName,
+//     hideBreadcrumb: true,
+//   },
+//   children: [
+//     {
+//       path: '/redirect/:path(.*)',
+//       name: RedirectName,
+//       component: () => import('@/views/redirect/index.vue'),
+//       meta: {
+//         title: RedirectName,
+//         hideBreadcrumb: true,
+//       },
+//     },
+//   ],
+// };

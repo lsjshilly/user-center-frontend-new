@@ -3,7 +3,7 @@ import { http } from '@/utils/http/axios';
 export interface BasicResponseModel<T = any> {
   code: number;
   message: string;
-  result: T;
+  data: T;
 }
 
 export interface BasicPageParams {
@@ -17,8 +17,29 @@ export interface BasicPageParams {
  */
 export function getUserInfo() {
   return http.request({
-    url: '/admin_info',
+    url: '/user/me',
     method: 'get',
+  });
+}
+
+/**
+ * @description: 获取用户权限信息
+ */
+export function getPermissions() {
+  return http.request({
+    url: '/user/permissions',
+    method: 'get',
+  });
+}
+
+/**
+ * @description: 用户注册
+ */
+export function register(params) {
+  return http.request({
+    url: '/user/register',
+    method: 'POST',
+    params,
   });
 }
 
@@ -28,7 +49,7 @@ export function getUserInfo() {
 export function login(params) {
   return http.request<BasicResponseModel>(
     {
-      url: '/login',
+      url: '/user/login',
       method: 'POST',
       params,
     },

@@ -50,12 +50,7 @@ export const RegisterRoute: RouteRecordRaw = {
 export const asyncRoutes = [...routeModuleList];
 
 //普通路由 无需验证权限
-export const constantRouter: RouteRecordRaw[] = [
-  LoginRoute,
-  RegisterRoute,
-  RootRoute,
-  RedirectRoute,
-];
+export const constantRouter: RouteRecordRaw[] = [LoginRoute, RegisterRoute, RootRoute];
 
 const router = createRouter({
   history: createWebHistory(),

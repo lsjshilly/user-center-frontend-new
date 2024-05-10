@@ -61,18 +61,12 @@ const transform: AxiosTransform = {
       throw new Error('请求出错，请稍候重试');
     }
     //  这里 code，result，message为 后台统一的字段，需要修改为项目自己的接口返回格式
-    const { code, result, message } = data;
+    const { code, data: result, message } = data;
     // 请求成功
     const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
     // 是否显示提示信息
     if (isShowMessage) {
-      if (hasSuccess && (successMessageText || isShowSuccessMessage)) {
-        // 是否显示自定义信息提示
-        $dialog.success({
-          type: 'success',
-          content: successMessageText || message || '操作成功！',
-        });
-      } else if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
+      if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
         // 是否显示自定义信息提示
         $message.error(message || errorMessageText || '操作失败！');
       } else if (!hasSuccess && options.errorMessageMode === 'modal') {
@@ -85,38 +79,43 @@ const transform: AxiosTransform = {
         });
       }
     }
-
+    const errorMsg = message;
     // 接口请求成功，直接返回结果
     if (code === ResultEnum.SUCCESS) {
       return result;
+    } else {
+      $message.error(errorMsg);
     }
     // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
-    let errorMsg = message;
+
     switch (code) {
       // 请求失败
       case ResultEnum.ERROR:
         $message.error(errorMsg);
         break;
       // 登录超时
-      case ResultEnum.TIMEOUT:
+      case ResultEnum.NOT_LOGIN:
         const LoginName = PageEnum.BASE_LOGIN_NAME;
         const LoginPath = PageEnum.BASE_LOGIN;
         if (router.currentRoute.value?.name === LoginName) return;
         // 到登录页
-        errorMsg = '登录超时，请重新登录!';
-        $dialog.warning({
-          title: '提示',
-          content: '登录身份已失效，请重新登录!',
-          positiveText: '确定',
-          //negativeText: '取消',
-          closable: false,
-          maskClosable: false,
-          onPositiveClick: () => {
-            storage.clear();
-            window.location.href = LoginPath;
-          },
-          onNegativeClick: () => {},
-        });
+        storage.clear();
+        window.location.href = LoginPath;
+
+        // errorMsg = '登录超时，请重新登录!';
+        // $dialog.warning({
+        //   title: '提示',
+        //   content: '登录身份已失效，请重新登录!',
+        //   positiveText: '确定',
+        //   //negativeText: '取消',
+        //   closable: false,
+        //   maskClosable: false,
+        //   onPositiveClick: () => {
+        //     storage.clear();
+        //     window.location.href = LoginPath;
+        //   },
+        //   onNegativeClick: () => {},
+        // });
         break;
     }
     throw new Error(errorMsg);
@@ -188,7 +187,7 @@ const transform: AxiosTransform = {
   },
 
   /**
-   * @description: 响应错误处理
+   * @description: 响应错误处理 拦截非200的情绪
    */
   responseInterceptorsCatch: (error: any) => {
     const $dialog = window['$dialog'];

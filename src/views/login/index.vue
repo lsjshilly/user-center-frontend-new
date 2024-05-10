@@ -136,8 +136,8 @@
   let timer: NodeJS.Timeout | null = null;
 
   const formInline = reactive({
-    username: 'admin',
-    password: '123456',
+    username: 'test-user-4',
+    password: '12345678',
     loginType: 'account-sign',
     phone: '',
     code: '',

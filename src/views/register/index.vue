@@ -16,8 +16,8 @@
           :model="formInline"
           :rules="rules"
         >
-          <n-form-item path="phone">
-            <n-input v-model:value="formInline.phone" placeholder="请输入用户名">
+          <n-form-item path="username">
+            <n-input v-model:value="formInline.username" placeholder="请输入用户名">
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <PersonOutline />
@@ -25,8 +25,8 @@
               </template>
             </n-input>
           </n-form-item>
-          <n-form-item path="code">
-            <n-input v-model:value="formInline.code" placeholder="请输入密码">
+          <n-form-item path="password">
+            <n-input v-model:value="formInline.password" placeholder="请输入密码">
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <LockClosedOutline />
@@ -35,8 +35,8 @@
             </n-input>
           </n-form-item>
 
-          <n-form-item path="code">
-            <n-input v-model:value="formInline.code" placeholder="确认密码">
+          <n-form-item path="confirmPassword">
+            <n-input v-model:value="formInline.confirmPassword" placeholder="确认密码">
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <LockClosedOutline />
@@ -82,23 +82,18 @@
   interface FormState {
     username: string;
     password: string;
-    loginType: string;
-    phone: string;
-    code: string;
+    confirmPassword: string;
   }
 
   const formRef = ref();
   const message = useMessage();
   const loading = ref(false);
-  const autoLogin = ref(true);
   const LOGIN_NAME = PageEnum.BASE_LOGIN_NAME;
 
   const formInline = reactive({
-    username: 'admin',
-    password: '123456',
-    loginType: 'account-sign',
-    phone: '',
-    code: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
   });
 
   const rules = {
@@ -115,30 +110,25 @@
     e.preventDefault();
     formRef.value.validate(async (errors) => {
       if (!errors) {
-        const { username, password, phone, code, loginType } = formInline;
-        message.loading('登录中...');
+        const { username, password, confirmPassword } = formInline;
+        message.loading('注册中...');
         loading.value = true;
 
         const params: FormState = {
           username,
           password,
-          phone,
-          code,
-          loginType,
+          confirmPassword,
         };
 
         try {
-          const { code, message: msg } = await userStore.login(params);
+          await userStore.register(params);
           message.destroyAll();
-          if (code == ResultEnum.SUCCESS) {
-            const toPath = decodeURIComponent((route.query?.redirect || '/') as string);
-            message.success('登录成功，即将进入系统');
-            if (route.name === LOGIN_NAME) {
-              router.replace('/');
-            } else router.replace(toPath);
-          } else {
-            message.info(msg || '登录失败');
-          }
+
+          const toPath = decodeURIComponent((route.query?.redirect || '/') as string);
+          message.success('注册成功');
+          if (route.name === LOGIN_NAME) {
+            router.push('/login');
+          } else router.replace(toPath);
         } finally {
           loading.value = false;
         }
